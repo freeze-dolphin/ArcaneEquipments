@@ -41,7 +41,7 @@ public class ScriptAdapter {
 					continue;
 				}
 				
-				// TODO code to realize: script reading & loading
+				// TODO code to realize: script reading & loadings
 				
 			} else {
 				yamlAbandoned.add(f);
