@@ -1,0 +1,7 @@
+name: Arcane Equipments
+main: io.github.freeze_dolphin.arcane_equipments.ArcaneEquipments
+version: ${project.version}
+author: Freeze_Dolphin
+
+api-version: 1.14
+groovy-version: 2.5.8
