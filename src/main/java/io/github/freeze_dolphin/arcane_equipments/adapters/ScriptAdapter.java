@@ -7,11 +7,13 @@ import java.io.IOException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import io.github.freeze_dolphin.arcane_equipments.ArcaneEquipments;
+import io.github.freeze_dolphin.arcane_equipments.objects.YamlConfigurationElementsChecker;
 
 public class ScriptAdapter {
 
 	private File scriptDir;
-
+	private static final String elementsRequired = "engine-name|";
+	
 	public ScriptAdapter(ArcaneEquipments plug) throws IOException {
 		scriptDir = new File(plug.getDataFolder().getAbsolutePath() + File.separator + "scripts");
 
@@ -29,7 +31,9 @@ public class ScriptAdapter {
 			}
 		})) {
 			YamlConfiguration ycfg = YamlConfiguration.loadConfiguration(f);
-
+			if (new YamlConfigurationElementsChecker(ycfg).check(elementsRequired)) {
+				
+			}
 		}
 	}
 
