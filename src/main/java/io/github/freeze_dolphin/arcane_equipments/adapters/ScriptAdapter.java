@@ -3,6 +3,8 @@ package io.github.freeze_dolphin.arcane_equipments.adapters;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -11,15 +13,17 @@ import io.github.freeze_dolphin.arcane_equipments.objects.YamlConfigurationEleme
 
 public class ScriptAdapter {
 
-	private File scriptDir;
-	private static final String elementsRequired = "engine-name|";
+	private static final String elementsRequired = "engine-name";
 	
-	public ScriptAdapter(ArcaneEquipments plug) throws IOException {
-		scriptDir = new File(plug.getDataFolder().getAbsolutePath() + File.separator + "scripts");
-
+	private File scriptDir;
+	private List<File> yamlAbandoned = new ArrayList<File>();
+	private List<File> yamlDisabled = new ArrayList<File>();
+	
+	public ScriptAdapter(ArcaneEquipments plug, String scriptDirectoryName) throws IOException {
+		scriptDir = new File(plug.getDataFolder().getAbsolutePath() + File.separator + scriptDirectoryName);
 		if (!scriptDir.exists()) {
-			scriptDir.createNewFile();
-			plug.getLogger().warning("Script folder not found, automatically created!");
+			scriptDir.mkdir();
+			plug.getLogger().warning("Script directory not found, automatically created!");
 		}
 	}
 
@@ -32,14 +36,31 @@ public class ScriptAdapter {
 		})) {
 			YamlConfiguration ycfg = YamlConfiguration.loadConfiguration(f);
 			if (new YamlConfigurationElementsChecker(ycfg).check(elementsRequired)) {
+				if (f.getName().startsWith("_")) {
+					yamlDisabled.add(f);
+					continue;
+				}
 				
+				// TODO code to realize: script reading & loading
+				
+			} else {
+				yamlAbandoned.add(f);
+				continue;
 			}
 		}
 	}
+	
+	public File[] getAbandonedScripts() {
+		return yamlAbandoned.toArray(new File[yamlAbandoned.size()]);
+	}
 
+	public File[] getDisabledScripts() {
+		return yamlDisabled.toArray(new File[yamlDisabled.size()]);
+	}
+	
 	public void reload() {
 
-		// TODO code to realise: script file reloading
+		// TODO code to realize: script file reloading
 
 	}
 

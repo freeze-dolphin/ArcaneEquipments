@@ -1,0 +1,2 @@
+script-directory-name: "scripts"
+# All valid scripts inside this directory will be loaded except the ones the filename of which is started with '_'
