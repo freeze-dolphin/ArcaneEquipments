@@ -3,6 +3,7 @@ package io.github.freeze_dolphin.arcane_equipments;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -19,17 +20,23 @@ public class ArcaneEquipments extends JavaPlugin {
 		instance = this;
 
 		try {
-			ScriptAdapter scriptAdapter = new ScriptAdapter(this, config.getString("script-directory-name"));
-			scriptAdapter.initialize();
-			if (scriptAdapter.getAbandonedScripts().length > 0) {
+			File[] allInvalidScripts = {};
+			File[] allDisabledScripts = {};
+			for (String scriptDirName : config.getStringList("script-directories")) {
+				ScriptAdapter scriptAdapter = new ScriptAdapter(this, scriptDirName);
+				scriptAdapter.initialize();
+				ArrayUtils.addAll(allInvalidScripts, scriptAdapter.getInvalidScripts());
+				ArrayUtils.addAll(allDisabledScripts, scriptAdapter.getDisabledScripts());
+			}
+			if (allInvalidScripts.length > 0) {
 				warn("Detected that following scripts are invalid: ");
-				for (File f : scriptAdapter.getAbandonedScripts()) {
+				for (File f : allInvalidScripts) {
 					warn("  - " + f.getName() + " [" + f.getPath() + "]");
 				}
 			}
-			if (scriptAdapter.getDisabledScripts().length > 0) {
+			if (allDisabledScripts.length > 0) {
 				warn("Detected that following scripts are disabled: ");
-				for (File f : scriptAdapter.getDisabledScripts()) {
+				for (File f : allDisabledScripts) {
 					warn("  - " + f.getName() + " [" + f.getPath() + "]");
 				}
 			}
@@ -48,7 +55,7 @@ public class ArcaneEquipments extends JavaPlugin {
 	public Config getCSConfig() {
 		return config;
 	}
-	
+
 	public void info(String msg) {
 		getLogger().info(msg);
 	}
@@ -56,9 +63,9 @@ public class ArcaneEquipments extends JavaPlugin {
 	public void warn(String msg) {
 		getLogger().warning(msg);
 	}
-	
+
 	public void severe(String msg) {
 		getLogger().severe(msg);
 	}
-	
+
 }

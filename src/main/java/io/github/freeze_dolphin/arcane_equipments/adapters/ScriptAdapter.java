@@ -16,8 +16,9 @@ public class ScriptAdapter {
 	private static final String elementsRequired = "engine-name";
 	
 	private File scriptDir;
-	private List<File> yamlAbandoned = new ArrayList<File>();
+	private List<File> yamlInvalid = new ArrayList<File>();
 	private List<File> yamlDisabled = new ArrayList<File>();
+	private int yamlNum = 0;
 	
 	public ScriptAdapter(ArcaneEquipments plug, String scriptDirectoryName) throws IOException {
 		scriptDir = new File(plug.getDataFolder().getAbsolutePath() + File.separator + scriptDirectoryName);
@@ -35,6 +36,7 @@ public class ScriptAdapter {
 			}
 		})) {
 			YamlConfiguration ycfg = YamlConfiguration.loadConfiguration(f);
+			yamlNum++;
 			if (new YamlConfigurationElementsChecker(ycfg).check(elementsRequired)) {
 				if (f.getName().startsWith("_")) {
 					yamlDisabled.add(f);
@@ -44,18 +46,22 @@ public class ScriptAdapter {
 				// TODO code to realize: script reading & loading
 				
 			} else {
-				yamlAbandoned.add(f);
+				yamlInvalid.add(f);
 				continue;
 			}
 		}
 	}
 	
-	public File[] getAbandonedScripts() {
-		return yamlAbandoned.toArray(new File[yamlAbandoned.size()]);
+	public File[] getInvalidScripts() {
+		return yamlInvalid.toArray(new File[yamlInvalid.size()]);
 	}
 
 	public File[] getDisabledScripts() {
 		return yamlDisabled.toArray(new File[yamlDisabled.size()]);
+	}
+	
+	public int getYamlFileNumber() {
+		return yamlNum;
 	}
 	
 	public void reload() {
